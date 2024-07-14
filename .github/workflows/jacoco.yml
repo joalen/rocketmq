@@ -32,23 +32,8 @@ jobs:
     - name: Build project with JDK 17
       run: mvn test
 
-    - name: Checkout Export Repository
-      uses: actions/checkout@v2
+    - name: Upload JaCoCo reports
+      uses: actions/upload-artifact@v3
       with:
-        repository: flaky-dynamic-testing/jacoco-exports
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Copy JaCoCo Reports to new repository
-      run: |
-        mkdir /tmp/jacoco-reports
-        find . -type f -name "*.html" -not -path "./pom.xml*" -exec cp {} /tmp/jacoco-reports/ \;
-        ls -l /tmp/jacoco-reports/
-        REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
-        mv /tmp/jacoco-reports/ jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
-        cd jacoco-exports
-        git config user.email "actions@github.com"
-        git config user.name "GitHub Actions"
-        git add .
-        git commit -m "Add Jacoco reports for $REPO_NAME"
-        git push origin main
+        name: jacoco-report
+        path: '**/target/site/jacoco/**/*.html'
