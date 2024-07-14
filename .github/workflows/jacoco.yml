@@ -42,6 +42,7 @@ jobs:
       run: |
         mkdir /tmp/jacoco-reports
         find . -type f -name "*.html" -not -path "./pom.xml*" -exec cp {} /tmp/jacoco-reports/ \;
+        ls -l /tmp/jacoco-reports/
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
         mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
         mv /tmp/jacoco-reports/ jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
