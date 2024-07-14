@@ -40,13 +40,14 @@ jobs:
 
     - name: Copy JaCoCo Reports to new repository
       run: |
+        mkdir /tmp/jacoco-reports
         find . -type d -path "*/target/site/jacoco" | while IFS= read -r dir; do
             # Find .html and .xml files within each directory
-            find "$dir" -type f \( -name "*.html" -o -name "*.xml" \) -exec cp {} $GITHUB_WORKSPACE/jacoco-reports \;
+            find "$dir" -type f \( -name "*.html" -o -name "*.xml" \) -exec cp {} /tmp/jacoco-reports \;
         done
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME
-        cp -r $GITHUB_WORKSPACE/jacoco-report/* jacoco-exports/jacoco-reports-for-$REPO_NAME
+        mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
+        mv /tmp/jacoco-reports/ jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
         cd jacoco-exports
         git config user.email "actions@github.com"
         git config user.name "GitHub Actions"
