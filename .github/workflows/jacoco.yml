@@ -1,0 +1,105 @@
+name: Run JaCoCo
+
+on:
+  push:
+
+jobs:
+  run-jacoco:
+    name: '${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, macos-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: af43a3e71f2bdb4765294f7d6314b1428737849d
+  
+    - name: Set up JDK 17 for project
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: maven
+
+    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
+      if: runner.os == 'Linux'
+      run: |
+        # Add Jacoco Maven Plugin
+        sed -i '/<\/plugins>/i \
+            <plugin> \
+                <groupId>org.jacoco<\/groupId> \
+                <artifactId>jacoco-maven-plugin<\/artifactId> \
+                <version>0.8.5<\/version> \
+                <executions> \
+                    <execution> \
+                        <goals> \
+                            <goal>prepare-agent<\/goal> \
+                        <\/goals> \
+                    <\/execution> \
+                    <execution> \
+                        <id>report<\/id> \
+                        <phase>test<\/phase> \
+                        <goals> \
+                            <goal>report<\/goal> \
+                        <\/goals> \
+                    <\/execution> \
+                <\/executions> \
+            <\/plugin>' pom.xml
+
+    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
+      if: runner.os == 'macOS'
+      run: |
+        # Add Jacoco Maven Plugin
+        sed -i '' '/<\/plugins>/i \
+            <plugin> \
+                <groupId>org.jacoco<\/groupId> \
+                <artifactId>jacoco-maven-plugin<\/artifactId> \
+                <version>0.8.5<\/version> \
+                <executions> \
+                    <execution> \
+                        <goals> \
+                            <goal>prepare-agent<\/goal> \
+                        <\/goals> \
+                        <configuration> \
+                          <outputDirectory>${project.basedir}/custom-jacoco-reports</outputDirectory> \
+                        </configuration> \
+                    <\/execution> \
+                    <execution> \
+                        <id>report<\/id> \
+                        <phase>test<\/phase> \
+                        <goals> \
+                            <goal>report<\/goal> \
+                        <\/goals> \
+                    <\/execution> \
+                <\/executions> \
+            <\/plugin>' pom.xml
+
+        # Edit Surefire Plugin Configuration
+        sed -i '' '/<artifactId>maven-surefire-plugin<\/artifactId>/a \
+            <configuration> \
+                <testFailureIgnore>true<\/testFailureIgnore> \
+            <\/configuration>' pom.xml
+
+    - name: Build project with JDK 17
+      run: mvn test
+
+    - name: Checkout Export Repository
+      uses: actions/checkout@v2
+      with:
+        repository: flaky-dynamic-testing/jacoco-exports 
+        token: ${{ secrets.GITHUB_TOKEN }} 
+
+    - name: Copy Jacoco Reports to new repository
+      run: |
+        REPO_NAME=$(basename $GITHUB_REPOSITORY)
+        mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME
+        cp -r jacoco-reports/* jacoco-exports/jacoco-reports-for-$REPO_NAME
+        cd jacoco-exports
+        git config user.email "actions@github.com"
+        git config user.name "GitHub Actions"
+        git add .
+        git commit -m "Add Jacoco reports for $REPO_NAME"
+        git push origin main
