@@ -41,11 +41,11 @@ jobs:
                     <\/execution> \
                     <!-- attached to Maven test phase --> \
                     <execution> \
-                        <id>report<\/id> \ 
+                        <id>report<\/id> \
                         <phase>test<\/phase> \
-                        <goals> \ 
-                            <goal>report<\/goal> \ 
-                        <\/goals>  \
+                        <goals> \
+                            <goal>report<\/goal> \
+                        <\/goals> \
                     <\/execution> \
                 <\/executions> \
             <\/plugin>' pom.xml
@@ -67,7 +67,7 @@ jobs:
                     <\/execution> \
                     <!-- attached to Maven test phase --> \
                     <execution> \
-                        <id>report<\/id> \ 
+                        <id>report<\/id> \
                         <phase>test<\/phase> \
                         <goals> \
                             <goal>report<\/goal> \
