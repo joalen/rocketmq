@@ -41,13 +41,7 @@ jobs:
     - name: Copy JaCoCo Reports to new repository
       run: |
         mkdir /tmp/jacoco-reports
-        find . -type d -path "*/target/site/jacoco" | while IFS= read -r dir; do
-            # Find .html and .xml files within each directory and print their paths
-            find "$dir" -type f \( -name "*.html" -o -name "*.xml" \) -print | while IFS= read -r file; do
-                echo "Copying file: $file"
-                cp "$file" /tmp/jacoco-reports
-            done
-        done
+        find . -type f -name "*.html" -not -path "./pom.xml*" -exec cp {} /tmp/jacoco-reports/ \;
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
         mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
         mv /tmp/jacoco-reports/ jacoco-exports/jacoco-reports-for-$REPO_NAME-on-${{ matrix.os }}
