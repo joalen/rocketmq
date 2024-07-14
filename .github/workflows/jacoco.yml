@@ -27,8 +27,8 @@ jobs:
     - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
       if: runner.os == 'Linux'
       run: |
-        # Add Jacoco Maven Plugin
-        sed -i '/<\/plugins>/i \
+        # Add Jacoco Maven Plugin to the build/plugins section
+        sed -i '/<plugins>/a \
             <plugin> \
                 <groupId>org.jacoco<\/groupId> \
                 <artifactId>jacoco-maven-plugin<\/artifactId> \
@@ -53,8 +53,8 @@ jobs:
     - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
       if: runner.os == 'macOS'
       run: |
-        # Add Jacoco Maven Plugin
-        sed -i '' '/<\/plugins>/i \
+        # Add Jacoco Maven Plugin to the build/plugins section
+        sed -i '' '/<plugins>/a \
             <plugin> \
                 <groupId>org.jacoco<\/groupId> \
                 <artifactId>jacoco-maven-plugin<\/artifactId> \
