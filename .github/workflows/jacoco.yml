@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: af43a3e71f2bdb4765294f7d6314b1428737849d
-  
+
     - name: Set up JDK 17 for project
       uses: actions/setup-java@v3
       with:
@@ -24,7 +24,7 @@ jobs:
         java-version: '17'
         cache: maven
 
-    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration (Linux)
+    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
       if: runner.os == 'Linux'
       run: |
         sed -i '/<\/plugins>/i \
@@ -50,12 +50,12 @@ jobs:
                   </execution> \
               </executions> \
           </plugin>' pom.xml
-        sed -i '/<artifactId>maven-surefire-plugin<\/artifactId>/a \
+        sed -i '/<artifactId>maven-surefire-plugin<\/artifactId>/{N;s/<\/configuration>/<testFailureIgnore>true<\/testFailureIgnore><\/configuration>/;s/<configuration>/<configuration>/}' pom.xml || sed -i '/<artifactId>maven-surefire-plugin<\/artifactId>/a \
           <configuration> \
               <testFailureIgnore>true<\/testFailureIgnore> \
           <\/configuration>' pom.xml
 
-    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration (macOS)
+    - name: Add Jacoco Maven Plugin and Edit Surefire Configuration
       if: runner.os == 'macOS'
       run: |
         sed -i '' '/<\/plugins>/i \
@@ -81,7 +81,7 @@ jobs:
                   </execution> \
               </executions> \
           </plugin>' pom.xml
-        sed -i '' '/<artifactId>maven-surefire-plugin<\/artifactId>/a \
+        sed -i '' '/<artifactId>maven-surefire-plugin<\/artifactId>/{N;s/<\/configuration>/<testFailureIgnore>true<\/testFailureIgnore><\/configuration>/;s/<configuration>/<configuration>/}' pom.xml || sed -i '' '/<artifactId>maven-surefire-plugin<\/artifactId>/a \
           <configuration> \
               <testFailureIgnore>true<\/testFailureIgnore> \
           <\/configuration>' pom.xml
