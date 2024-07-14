@@ -2,8 +2,6 @@ name: Run JaCoCo
 
 on:
   push:
-    branches:
-      - main  # Adjust as necessary
 
 jobs:
   run-jacoco:
