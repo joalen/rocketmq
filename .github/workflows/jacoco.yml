@@ -41,9 +41,6 @@ jobs:
                           <goals> \
                               <goal>prepare-agent</goal> \
                           </goals> \
-                          <configuration> \
-                              <outputDirectory>${project.basedir}/custom-jacoco-reports</outputDirectory> \
-                          </configuration> \
                       </execution> \
                       <execution> \
                           <id>report</id> \
@@ -70,9 +67,6 @@ jobs:
                           <goals> \
                               <goal>prepare-agent</goal> \
                           </goals> \
-                          <configuration> \
-                              <outputDirectory>${project.basedir}/custom-jacoco-reports</outputDirectory> \
-                          </configuration> \
                       </execution> \
                       <execution> \
                           <id>report</id> \
@@ -105,12 +99,16 @@ jobs:
 
     - name: Copy JaCoCo Reports to new repository
       run: |
+        find . -type d -path "*/target/site/jacoco" | while IFS= read -r dir; do
+            # Find .html and .xml files within each directory
+            find "$dir" -type f \( -name "*.html" -o -name "*.xml" \) -exec cp {} $GITHUB_WORKSPACE/jacoco-reports \;
+        done
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
         mkdir -p jacoco-exports/jacoco-reports-for-$REPO_NAME
-        cp -r custom-jacoco-reports/* jacoco-exports/jacoco-reports-for-$REPO_NAME
+        cp -r $GITHUB_WORKSPACE/jacoco-report/* jacoco-exports/jacoco-reports-for-$REPO_NAME
         cd jacoco-exports
         git config user.email "actions@github.com"
         git config user.name "GitHub Actions"
         git add .
-        git commit -m "Add JaCoCo reports for $REPO_NAME"
+        git commit -m "Add Jacoco reports for $REPO_NAME"
         git push origin main
