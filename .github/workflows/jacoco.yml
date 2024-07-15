@@ -35,5 +35,5 @@ jobs:
     - name: Upload JaCoCo reports
       uses: actions/upload-artifact@v3
       with:
-        name: jacoco-report
+        name: jacoco-report-${{ github.event.repository.name }}-on-${{ matrix.os }}
         path: '**/target/site/jacoco/**/*.html'
